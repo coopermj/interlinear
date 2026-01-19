@@ -209,13 +209,18 @@
     }\hspace{0.1em}\allowbreak%
 }
 
-% Appendix entry anchor
-\newcommand{\strongsentry}[4]{%
+% Appendix entry anchor with optional LSJ definition
+% #1 = Strong's number, #2 = lemma, #3 = translit, #4 = Strong's def, #5 = LSJ def
+\newcommand{\strongsentry}[5]{%
     \hypertarget{strongs:#1}{}%
     \noindent\textbf{#1} --- {\greekfont #2} (#3)\par
     \hangindent=1em\hangafter=0
-    \scriptsize #4\par
-    \vspace{0.4em}%
+    \scriptsize\textit{Strong's:} #4%
+    \ifx&#5&%
+    \else
+        \par\scriptsize\textit{LSJ:} #5%
+    \fi
+    \par\vspace{0.5em}%
 }
 
 % Chapter marker for headers

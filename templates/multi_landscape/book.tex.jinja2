@@ -26,7 +26,7 @@
 <% for chapter in chapters %>
 \item \hyperlink{chapter:<< chapter.number >>}{Chapter << chapter.number >>}
 <% endfor %>
-\item \hyperlink{appendix}{Strong's Appendix}
+\item \hyperlink{appendix}{Greek Lexicon (Strong's \& LSJ)}
 \end{itemize}
 \end{multicols}
 
@@ -116,10 +116,10 @@
 \chaptermark{Strong's Concordance}
 
 \begin{center}
-{\Large\bfseries Strong's Concordance}
+{\Large\bfseries Greek Lexicon}
 
 \vspace{0.3em}
-{\scriptsize Greek words used in << book_title >> with definitions}
+{\scriptsize Greek words used in << book_title >> with Strong's and Liddell \& Scott definitions}
 \end{center}
 
 \vspace{0.5em}
@@ -129,7 +129,7 @@
 \begin{multicols}{3}
 \scriptsize
 <% for entry in strongs_entries %>
-\strongsentry{<< entry.strongs >>}{<< entry.lemma >>}{<< entry.translit >>}{<< entry.definition >>}
+\strongsentry{<< entry.strongs >>}{<< entry.lemma >>}{<< entry.translit >>}{<< entry.definition >>}{<< entry.lsj_definition >>}
 <% endfor %>
 \end{multicols}
 

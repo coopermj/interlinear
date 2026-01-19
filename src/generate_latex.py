@@ -161,6 +161,7 @@ def render_book(greek_data: dict, esv_data: dict, passage_ref: str) -> Path:
         entry["lemma"] = escape_latex(entry.get("lemma", ""))
         entry["translit"] = escape_latex(entry.get("translit", ""))
         entry["definition"] = escape_latex(entry.get("definition", ""))
+        entry["lsj_definition"] = escape_latex(entry.get("lsj_definition", ""))
 
     env = Environment(
         loader=FileSystemLoader(TEMPLATES_DIR),

@@ -217,14 +217,18 @@
     }\hspace{0.15em}\allowbreak%
 }
 
-% Appendix entry anchor
-% Usage: \strongsentry{G1234}{lemma}{translit}{definition}
-\newcommand{\strongsentry}[4]{%
+% Appendix entry anchor with optional LSJ definition
+% Usage: \strongsentry{G1234}{lemma}{translit}{Strong's def}{LSJ def}
+\newcommand{\strongsentry}[5]{%
     \hypertarget{strongs:#1}{}%
     \noindent\textbf{#1} --- {\greekfont #2} (#3)\par
     \hangindent=1em\hangafter=0
-    \small #4\par
-    \vspace{0.5em}%
+    \small\textit{Strong's:} #4%
+    \ifx&#5&%
+    \else
+        \par\small\textit{LSJ:} #5%
+    \fi
+    \par\vspace{0.5em}%
 }
 
 % Chapter marker for headers (article class doesn't have \chaptermark)
