@@ -6,7 +6,7 @@ Generate beautifully typeset interlinear Bible PDFs with Greek text, English glo
 
 - **Greek Interlinear**: Greek text with context-sensitive English glosses above each word
 - **Multiple Translations**: ESV, NET, and KJV side-by-side
-- **Strong's Concordance**: Clickable glosses link to appendix with definitions
+- **Greek Lexicon**: Clickable glosses link to appendix with Strong's and Liddell & Scott definitions
 - **Navigation**: Table of contents, chapter links, running headers
 - **Optimized for E-readers**: Sized for Remarkable Paper Pro (179mm x 239mm)
 
@@ -89,6 +89,7 @@ Generated files are saved to the `output/` directory:
 
 - **Greek Text**: [OpenGNT](https://github.com/eliranwong/OpenGNT) (CC BY-SA 4.0)
 - **Strong's Dictionary**: [OpenScriptures](https://github.com/openscriptures/strongs)
+- **Liddell & Scott**: [LSJ via Perseids Project](https://github.com/perseids-project/lsj-js) (Perseus Digital Library)
 - **ESV**: [ESV API](https://api.esv.org/)
 - **NET**: [NET Bible API](https://labs.bible.org/)
 - **KJV**: [bible-api.com](https://bible-api.com/)
@@ -107,7 +108,7 @@ interlinear/
 │   ├── fetch_esv.py         # ESV API client
 │   ├── fetch_net.py         # NET API client
 │   ├── fetch_bibleapi.py    # bible-api.com client (KJV)
-│   ├── strongs_lookup.py    # Strong's dictionary lookup
+│   ├── strongs_lookup.py    # Strong's and LSJ dictionary lookup
 │   ├── generate_latex.py    # ESV Portrait LaTeX generation
 │   ├── generate_multi_latex.py  # Multi Landscape LaTeX generation
 │   └── build_pdf.py         # LuaLaTeX compilation
