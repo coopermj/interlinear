@@ -1,0 +1,10 @@
+config.py
+__pycache__/
+*.pyc
+data/OpenGNT_keyedFeatures.csv
+data/*.zip
+data/strongs-greek.js
+data/strongs-greek.json
+.DS_Store
+output/
+.venv/

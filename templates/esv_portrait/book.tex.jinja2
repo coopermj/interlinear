@@ -1,0 +1,115 @@
+\input{../templates/preamble}
+
+\begin{document}
+
+% ============================================
+% Title Page and Table of Contents
+% ============================================
+\thispagestyle{empty}
+
+\begin{center}
+{\Huge\bfseries << book_title >>}
+
+\vspace{1em}
+{\large Greek--English Interlinear}
+
+\vspace{2em}
+\end{center}
+
+\hypertarget{toc}{}
+\section*{Contents}
+\begin{itemize}
+<% for chapter in chapters %>
+\item \hyperlink{chapter:<< chapter.number >>}{Chapter << chapter.number >>}
+<% endfor %>
+\item \hyperlink{appendix}{Strong's Concordance Appendix}
+\end{itemize}
+
+\vfill
+
+\begin{center}
+\small
+\textit{Greek text: SBL Greek New Testament via OpenGNT (CC BY-SA 4.0)}\\
+\textit{English text: ESV (English Standard Version)}\\[0.5em]
+\textit{Click on any English gloss to jump to its Strong's entry}\\
+\textit{Click {\Large\faIcon{home}} in footer to return here}
+\end{center}
+
+\newpage
+
+% ============================================
+% Column Headers
+% ============================================
+\columnheaders
+
+<% for chapter in chapters %>
+% ============================================
+% Chapter << chapter.number >>
+% ============================================
+% Ensure chapter heading is not orphaned at bottom of page
+\needspace{6\baselineskip}
+\hypertarget{chapter:<< chapter.number >>}{}
+\chaptermark{<< book_title >> << chapter.number >>}
+
+\begin{paracol}{2}
+
+\begin{center}
+\textbf{Chapter << chapter.number >>}
+\end{center}
+
+\switchcolumn
+
+\begin{center}
+{\bembofont\textbf{Chapter << chapter.number >>}}
+\end{center}
+
+\switchcolumn*
+
+<% for verse in chapter.verses %>
+% Verse << chapter.number >>:<< verse.number >>
+\setverseheader{<< chapter.number >>:<< verse.number >>}
+\versenum{<< verse.number >>}%
+<% for word in verse.greek_words %><% if word.strongs %>\glosslink{<< word.greek >>}{<< word.gloss >>}{<< word.strongs >>}<% else %>\gloss{<< word.greek >>}{<< word.gloss >>}<% endif %><% endfor %>
+
+\switchcolumn
+<% if verse.heading %>\sectionheading{<< verse.heading >>}<% endif %>
+{\bembofont\vs{<< verse.number >>}<< verse.esv_text >>}
+
+<% if not loop.last %>
+\switchcolumn*
+<% endif %>
+<% endfor %>
+
+\end{paracol}
+
+<% if not loop.last %>
+\vspace{1em}
+<% endif %>
+<% endfor %>
+
+% ============================================
+% Strong's Concordance Appendix
+% ============================================
+\newpage
+\hypertarget{appendix}{}
+\chaptermark{Strong's Concordance}
+
+\begin{center}
+{\Large\bfseries Strong's Concordance}
+
+\vspace{0.5em}
+{\small Greek words used in << book_title >> with definitions}
+\end{center}
+
+\vspace{1em}
+\hrule
+\vspace{1em}
+
+\begin{multicols}{2}
+\small
+<% for entry in strongs_entries %>
+\strongsentry{<< entry.strongs >>}{<< entry.lemma >>}{<< entry.translit >>}{<< entry.definition >>}
+<% endfor %>
+\end{multicols}
+
+\end{document}

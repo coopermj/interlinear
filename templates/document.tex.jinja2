@@ -1,0 +1,32 @@
+\input{../templates/preamble}
+
+\begin{document}
+
+\passagetitle{<< passage_title >>}
+
+\columnheaders
+
+\begin{paracol}{2}
+<% for verse in verses %>
+% Verse << verse.number >>
+\versenum{<< verse.number >>}%
+<% for word in verse.greek_words %>\gloss{<< word.greek >>}{<< word.gloss >>}<% endfor %>
+
+\switchcolumn
+{\bembofont\versenum{<< verse.number >>}<< verse.esv_text >>}
+
+<% if not loop.last %>
+\switchcolumn*
+<% endif %>
+<% endfor %>
+\end{paracol}
+
+\vfill
+
+\begin{center}
+\small
+\textit{Greek text: SBL Greek New Testament via OpenGNT (CC BY-SA 4.0)}\\
+\textit{English text: ESV (English Standard Version)}
+\end{center}
+
+\end{document}

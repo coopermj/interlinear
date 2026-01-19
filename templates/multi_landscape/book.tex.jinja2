@@ -1,0 +1,136 @@
+\input{../templates/multi_landscape/preamble}
+
+\begin{document}
+
+% ============================================
+% Title Page and Table of Contents
+% ============================================
+\thispagestyle{empty}
+
+\begin{center}
+{\Huge\bfseries << book_title >>}
+
+\vspace{0.5em}
+{\large Greek--English Interlinear}
+
+\vspace{0.3em}
+{\normalsize ESV \textbullet{} NET \textbullet{} KJV}
+
+\vspace{1em}
+\end{center}
+
+\hypertarget{toc}{}
+\section*{Contents}
+\begin{multicols}{3}
+\begin{itemize}
+<% for chapter in chapters %>
+\item \hyperlink{chapter:<< chapter.number >>}{Chapter << chapter.number >>}
+<% endfor %>
+\item \hyperlink{appendix}{Strong's Appendix}
+\end{itemize}
+\end{multicols}
+
+\vfill
+
+\begin{center}
+\scriptsize
+\textit{Greek: SBL Greek NT via OpenGNT (CC BY-SA 4.0)}\\
+\textit{ESV: English Standard Version | NET: New English Translation | KJV: American Standard Version}\\[0.3em]
+\textit{Click glosses for Strong's definitions | Click {\normalsize\faIcon{home}} to return here}
+\end{center}
+
+\newpage
+
+% ============================================
+% Column Headers
+% ============================================
+\columnheaders
+
+<% for chapter in chapters %>
+% ============================================
+% Chapter << chapter.number >>
+% ============================================
+\needspace{5\baselineskip}
+\hypertarget{chapter:<< chapter.number >>}{}
+\chaptermark{<< book_title >> << chapter.number >>}
+
+\begin{paracol}{4}
+
+\begin{center}
+\textbf{\small Chapter << chapter.number >>}
+\end{center}
+
+\switchcolumn
+
+\begin{center}
+{\bembofont\textbf{\small Chapter << chapter.number >>}}
+\end{center}
+
+\switchcolumn
+
+\begin{center}
+{\bembofont\textbf{\small Chapter << chapter.number >>}}
+\end{center}
+
+\switchcolumn
+
+\begin{center}
+{\bembofont\textbf{\small Chapter << chapter.number >>}}
+\end{center}
+
+\switchcolumn*
+
+<% for verse in chapter.verses %>
+% Verse << chapter.number >>:<< verse.number >>
+\setverseheader{<< chapter.number >>:<< verse.number >>}
+{\footnotesize\versenum{<< verse.number >>}%
+<% for word in verse.greek_words %><% if word.strongs %>\glosslink{<< word.greek >>}{<< word.gloss >>}{<< word.strongs >>}<% else %>\gloss{<< word.greek >>}{<< word.gloss >>}<% endif %><% endfor %>}
+
+\switchcolumn
+<% if verse.heading %>\sectionheading{<< verse.heading >>}<% endif %>
+{\footnotesize\bembofont\vs{<< verse.number >>}<< verse.esv_text >>}
+
+\switchcolumn
+{\footnotesize\bembofont\vs{<< verse.number >>}<< verse.net_text >>}
+
+\switchcolumn
+{\footnotesize\bembofont\vs{<< verse.number >>}<< verse.kjv_text >>}
+
+<% if not loop.last %>
+\switchcolumn*
+<% endif %>
+<% endfor %>
+
+\end{paracol}
+
+<% if not loop.last %>
+\vspace{0.5em}
+<% endif %>
+<% endfor %>
+
+% ============================================
+% Strong's Concordance Appendix
+% ============================================
+\newpage
+\hypertarget{appendix}{}
+\chaptermark{Strong's Concordance}
+
+\begin{center}
+{\Large\bfseries Strong's Concordance}
+
+\vspace{0.3em}
+{\scriptsize Greek words used in << book_title >> with definitions}
+\end{center}
+
+\vspace{0.5em}
+\hrule
+\vspace{0.5em}
+
+\begin{multicols}{3}
+\scriptsize
+<% for entry in strongs_entries %>
+\strongsentry{<< entry.strongs >>}{<< entry.lemma >>}{<< entry.translit >>}{<< entry.definition >>}
+<% endfor %>
+\end{multicols}
+
+\end{document}

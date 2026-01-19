@@ -1,0 +1,225 @@
+\documentclass[10pt,oneside]{article}
+
+% LuaLaTeX font support
+\usepackage{fontspec}
+
+% Microtypography - LuaLaTeX compatible features only
+\usepackage[
+    activate={true,nocompatibility},
+    final,
+    protrusion=true,
+    expansion=true,
+    tracking=true,
+    kerning=false,
+    spacing=false
+]{microtype}
+
+% Parallel columns that stay synchronized
+\usepackage{paracol}
+
+% Page geometry - Remarkable Paper Pro LANDSCAPE: 239mm x 179mm
+\usepackage[
+    papersize={239mm,179mm},
+    margin=8mm,
+    top=12mm,
+    bottom=12mm,
+    columnsep=5mm
+]{geometry}
+
+% Better paragraph handling
+\usepackage{parskip}
+
+% Color support
+\usepackage{xcolor}
+
+% Hyperlinks with PDF bookmarks
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    bookmarks=true,
+    bookmarksopen=true,
+    bookmarksnumbered=false,
+    pdftitle={Interlinear Bible - Multi Translation},
+    pdfauthor={Generated with OpenGNT, ESV, NET, KJV}
+}
+
+% For fancy headers and footers
+\usepackage{fancyhdr}
+
+% Font Awesome 5 icons
+\usepackage{fontawesome5}
+
+% For multi-column appendix
+\usepackage{multicol}
+
+% For preventing orphaned headings
+\usepackage{needspace}
+
+% ============================================
+% Font Configuration
+% ============================================
+
+% Adobe fonts path
+\newcommand{\adobefontpath}{/Users/micahcooper/Library/Application Support/Adobe/CoreSync/plugins/livetype/.r/}
+
+% Bembo Book MT Pro for ESV text
+\newfontfamily\bembofont[
+    Path={\adobefontpath},
+    UprightFont={.60754.otf},
+    ItalicFont={.60740.otf},
+    BoldFont={.60755.otf},
+    BoldItalicFont={.60741.otf}
+]{BemboBookMTPro}
+
+% Gentium Plus for Greek text
+\IfFontExistsTF{Gentium Plus}{
+    \setmainfont{Gentium Plus}
+    \newfontfamily\greekfont{Gentium Plus}[Script=Greek]
+}{
+    \IfFontExistsTF{GentiumPlus}{
+        \setmainfont{GentiumPlus}
+        \newfontfamily\greekfont{GentiumPlus}[Script=Greek]
+    }{
+        \setmainfont{Latin Modern Roman}
+        \newfontfamily\greekfont{Latin Modern Roman}
+    }
+}
+
+% ============================================
+% Column Configuration - 4 columns
+% ============================================
+% Greek: 30%, ESV: 24%, NET: 23%, KJV: 23%
+\columnratio{0.30, 0.24, 0.23}
+
+% ============================================
+% Custom Commands
+% ============================================
+
+% Interlinear gloss: Greek word with English above (smaller for landscape)
+\newcommand{\gloss}[2]{%
+    \mbox{%
+        \begin{tabular}[b]{@{}c@{}}
+            {\tiny\color{gray}#2}\\[-3pt]
+            {\footnotesize\greekfont #1}
+        \end{tabular}%
+    }\hspace{0.1em}\allowbreak%
+}
+
+% Verse number in superscript (for Greek column)
+\newcommand{\versenum}[1]{%
+    \textsuperscript{\scriptsize\textbf{#1}}\hspace{0.1em}%
+}
+
+% Verse number for translation columns
+\newcommand{\vs}[1]{%
+    \textsuperscript{\scriptsize\textbf{#1}}\hspace{0.05em}%
+}
+
+% Section heading (ESV section titles)
+\newcommand{\sectionheading}[1]{%
+    \needspace{2\baselineskip}%
+    \vspace{0.4em}%
+    {\footnotesize\bembofont\textsc{#1}}%
+    \vspace{0.2em}%
+    \par%
+}
+
+% Section title for the passage
+\newcommand{\passagetitle}[1]{%
+    \begin{center}
+        {\Large\bfseries #1}
+        \vspace{0.3em}
+    \end{center}
+}
+
+% Column headers for 4 columns
+\newcommand{\columnheaders}{%
+    \begin{paracol}{4}
+        \begin{center}
+            {\scriptsize\textsc{Greek Interlinear}}
+        \end{center}
+        \switchcolumn
+        \begin{center}
+            {\scriptsize\bembofont\textsc{ESV}}
+        \end{center}
+        \switchcolumn
+        \begin{center}
+            {\scriptsize\bembofont\textsc{NET}}
+        \end{center}
+        \switchcolumn
+        \begin{center}
+            {\scriptsize\bembofont\textsc{KJV}}
+        \end{center}
+    \end{paracol}
+    \vspace{0.3em}
+    \hrule
+    \vspace{0.3em}
+}
+
+% ============================================
+% Document Settings
+% ============================================
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.3em}
+
+% Smaller font size for landscape multi-column
+\renewcommand{\normalsize}{\fontsize{9pt}{11pt}\selectfont}
+
+% Reduced baseline skip
+\setlength{\baselineskip}{10pt}
+
+% Allow more flexible line breaking
+\tolerance=2000
+\emergencystretch=3em
+\hfuzz=0.5pt
+
+% Prevent hyphenation in Greek
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+
+% ============================================
+% Header/Footer Configuration (Single-sided)
+% ============================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Header: Chapter info left, verse info right
+\fancyhead[L]{\small\textit{\leftmark}}
+\fancyhead[R]{\small\textit{\rightmark}}
+
+% Footer: TOC icon left, page number center
+\fancyfoot[L]{\hyperlink{toc}{\Large\faIcon{home}}}
+\fancyfoot[C]{\thepage}
+
+% ============================================
+% Strong's Linked Gloss Commands
+% ============================================
+
+% Interlinear gloss with Strong's link (smaller for landscape)
+\newcommand{\glosslink}[3]{%
+    \mbox{%
+        \begin{tabular}[b]{@{}c@{}}
+            {\tiny\color{gray}\hyperlink{strongs:#3}{#2}}\\[-3pt]
+            {\footnotesize\greekfont #1}
+        \end{tabular}%
+    }\hspace{0.1em}\allowbreak%
+}
+
+% Appendix entry anchor
+\newcommand{\strongsentry}[4]{%
+    \hypertarget{strongs:#1}{}%
+    \noindent\textbf{#1} --- {\greekfont #2} (#3)\par
+    \hangindent=1em\hangafter=0
+    \scriptsize #4\par
+    \vspace{0.4em}%
+}
+
+% Chapter marker for headers
+\newcommand{\chaptermark}[1]{\markboth{#1}{}}
+
+% Verse marker for headers
+\newcommand{\setverseheader}[1]{\markright{#1}}
