@@ -6,6 +6,7 @@ from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
 from pypdf import PdfReader, PdfWriter
+from pypdf.annotations import Link
 
 from .build_pdf import build_pdf
 
@@ -105,8 +106,19 @@ def generate_toc_pdf(books: list[dict], total_stats: dict) -> Path:
     return toc_pdf
 
 
-def merge_pdfs(toc_pdf: Path, book_pdfs: list[Path], output_path: Path) -> Path:
-    """Merge TOC and book PDFs into a single file with bookmarks."""
+def add_toc_links(writer: PdfWriter, book_destinations: list[dict], toc_page_index: int = 1):
+    """Add clickable links to the TOC page using pypdf annotations."""
+    for book in book_destinations:
+        # Create Link annotation pointing to the target page
+        link = Link(
+            rect=(50, book["y_position"] - 5, 450, book["y_position"] + 12),
+            target_page_index=book["page_index"],
+        )
+        writer.add_annotation(page_number=toc_page_index, annotation=link)
+
+
+def merge_pdfs(toc_pdf: Path, book_pdfs: list[Path], output_path: Path, books_info: list[dict]) -> Path:
+    """Merge TOC and book PDFs into a single file with bookmarks and clickable TOC."""
     writer = PdfWriter()
 
     # Add TOC pages
@@ -114,21 +126,42 @@ def merge_pdfs(toc_pdf: Path, book_pdfs: list[Path], output_path: Path) -> Path:
     for page in toc_reader.pages:
         writer.add_page(page)
 
-    # Track page numbers for bookmarks
-    current_page = len(toc_reader.pages)
+    toc_page_count = len(toc_reader.pages)
+
+    # Track page numbers and build destination info for TOC links
+    current_page = toc_page_count
+    book_destinations = []
+
+    # Calculate Y positions for TOC entries (based on template layout)
+    # TOC starts around y=580 and each entry is ~15pt apart
+    toc_start_y = 580
+    line_height = 15
 
     # Add each book with bookmark
-    for pdf_path in book_pdfs:
+    for i, pdf_path in enumerate(book_pdfs):
         reader = PdfReader(pdf_path)
         book_name = pdf_path.stem.replace("_", " ")
 
         # Add bookmark pointing to first page of this book
         writer.add_outline_item(book_name, current_page)
 
+        # Track for TOC link
+        book_destinations.append({
+            "name": book_name,
+            "page_index": current_page,
+            "y_position": toc_start_y - (i * line_height),
+        })
+
         for page in reader.pages:
             writer.add_page(page)
 
         current_page += len(reader.pages)
+
+    # Add clickable links to TOC page
+    try:
+        add_toc_links(writer, book_destinations, toc_page_index=1)
+    except Exception as e:
+        print(f"Warning: Could not add TOC links: {e}")
 
     # Write merged PDF
     with open(output_path, 'wb') as f:
@@ -165,7 +198,7 @@ def merge_collection(output_name: str = "NT_Interlinear.pdf") -> Path:
     # Merge all PDFs
     print("Merging PDFs...")
     output_path = OUTPUT_DIR / output_name
-    merge_pdfs(toc_pdf, book_pdfs, output_path)
+    merge_pdfs(toc_pdf, book_pdfs, output_path, books)
 
     print(f"\nCreated: {output_path}")
     return output_path
