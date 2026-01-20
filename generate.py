@@ -24,10 +24,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from src.download_data import download_opengnt
-from src.parse_greek import load_greek_passage
+from src.parse_greek import load_greek_passage, BOOK_CHAPTERS
 from src.fetch_esv import fetch_esv_passage
 from src.generate_latex import render_document
 from src.build_pdf import build_pdf, check_lualatex
+from src.merge_books import merge_collection, find_portrait_books
 
 AVAILABLE_LAYOUTS = {
     "esv-portrait": "Greek + ESV (Remarkable Paper Pro portrait)",
@@ -214,6 +215,14 @@ Before first use:
         print(f"SUCCESS! PDF generated:")
         print(f"  {pdf_path}")
         print(f"{'='*60}\n")
+
+        # Auto-merge portrait books into collection if this is a full book
+        if args.layout == "esv-portrait" and greek_data.get("type") == "book":
+            portrait_books = find_portrait_books()
+            if len(portrait_books) > 1:
+                print("Updating merged collection...")
+                collection_path = merge_collection()
+                print(f"  {collection_path}\n")
 
     except FileNotFoundError as e:
         print(f"\nError: {e}", file=sys.stderr)

@@ -1,0 +1,55 @@
+\input{../templates/esv_portrait/preamble}
+
+\begin{document}
+
+\thispagestyle{empty}
+
+\begin{center}
+\vspace*{3cm}
+
+{\Huge\bfseries Greek--English Interlinear}
+
+\vspace{1em}
+{\Large New Testament}
+
+\vspace{2em}
+{\normalsize English Standard Version}
+
+\vspace{4cm}
+\end{center}
+
+\vfill
+
+\begin{center}
+\small
+\textit{Greek text: SBL Greek New Testament via OpenGNT (CC BY-SA 4.0)}\\
+\textit{English text: ESV (English Standard Version)}\\[0.5em]
+\textit{Click on any English gloss to jump to its Strong's entry}
+\end{center}
+
+\newpage
+
+\thispagestyle{empty}
+
+\begin{center}
+{\Large\bfseries Contents}
+\end{center}
+
+\vspace{2em}
+
+\begin{center}
+\begin{tabular}{lr}
+<% for book in books %>
+<< book.name >> & << book.page >> \\[0.3em]
+<% endfor %>
+\end{tabular}
+\end{center}
+
+\vfill
+
+\begin{center}
+\scriptsize
+\textit{<< total_chapters >> chapters | << total_verses >> verses | << total_words >> Greek words}
+\end{center}
+
+\end{document}
