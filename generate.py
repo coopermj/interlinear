@@ -24,7 +24,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from src.download_data import download_opengnt
-from src.parse_greek import load_greek_passage, BOOK_CHAPTERS
+from src.parse_greek import load_greek_passage
 from src.fetch_esv import fetch_esv_passage
 from src.generate_latex import render_document
 from src.build_pdf import build_pdf, check_lualatex
