@@ -33,6 +33,7 @@ from src.merge_books import merge_collection, find_portrait_books
 AVAILABLE_LAYOUTS = {
     "esv-portrait": "Greek + ESV (Remarkable Paper Pro portrait)",
     "multi-landscape": "Greek + ESV + NET + KJV (Remarkable Paper Pro landscape)",
+    "myfont-portrait": "Greek + ESV with custom font and random glyph variants",
 }
 
 
@@ -109,6 +110,23 @@ def generate_multi_landscape(args, greek_data):
     return tex_path
 
 
+def generate_myfont_portrait(args, greek_data):
+    """Generate Myfont Portrait layout with random glyph variants."""
+    from src.generate_myfont_latex import render_myfont_book
+
+    # Fetch ESV text
+    print(f"\n[3/4] Fetching ESV translation...")
+    esv_data = fetch_esv_passage(args.passage, args.api_key)
+    esv_verse_count = count_translation_data(esv_data)
+    print(f"   Retrieved {esv_verse_count} verses from ESV API")
+
+    # Generate LaTeX
+    print(f"\n[4/4] Generating LaTeX document...")
+    tex_path = render_myfont_book(greek_data, esv_data, args.passage)
+
+    return tex_path
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Generate interlinear Bible PDF",
@@ -117,6 +135,7 @@ def main():
 Layouts:
     esv-portrait      Greek + ESV (default, Remarkable Paper Pro portrait)
     multi-landscape   Greek + ESV + NET + KJV (Remarkable Paper Pro landscape)
+    myfont-portrait   Greek + ESV with custom font and random glyph variants
 
 Examples:
     python generate.py "John 1:1-18"
@@ -169,7 +188,7 @@ Before first use:
         download_opengnt()
 
         # Step 2: Load Greek data
-        step = "[2/4]" if args.layout == "esv-portrait" else "[2/6]"
+        step = "[2/4]" if args.layout in ("esv-portrait", "myfont-portrait") else "[2/6]"
         print(f"\n{step} Loading Greek text for {args.passage}...")
         greek_data = load_greek_passage(args.passage)
 
@@ -190,6 +209,8 @@ Before first use:
             tex_path = generate_esv_portrait(args, greek_data)
         elif args.layout == "multi-landscape":
             tex_path = generate_multi_landscape(args, greek_data)
+        elif args.layout == "myfont-portrait":
+            tex_path = generate_myfont_portrait(args, greek_data)
         else:
             raise ValueError(f"Unknown layout: {args.layout}")
 

@@ -1,0 +1,257 @@
+\documentclass[11pt,oneside]{article}
+
+% LuaLaTeX font support
+\usepackage{fontspec}
+\usepackage{luacode}
+
+% Microtypography - LuaLaTeX compatible features only
+\usepackage[
+    activate={true,nocompatibility},
+    final,
+    protrusion=true,
+    expansion=true,
+    tracking=true,
+    kerning=false,
+    spacing=false
+]{microtype}
+
+% Parallel columns that stay synchronized
+\usepackage{paracol}
+
+% Page geometry - Remarkable Paper Pro: 179mm x 239mm display
+\usepackage[
+    papersize={179mm,239mm},
+    margin=10mm,
+    top=15mm,
+    bottom=15mm,
+    columnsep=8mm
+]{geometry}
+
+% Better paragraph handling
+\usepackage{parskip}
+
+% Color support
+\usepackage{xcolor}
+
+% Hyperlinks with PDF bookmarks
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    bookmarks=true,
+    bookmarksopen=true,
+    bookmarksnumbered=false,
+    pdftitle={Interlinear Bible},
+    pdfauthor={Generated with OpenGNT and ESV}
+}
+
+% For fancy headers and footers
+\usepackage{fancyhdr}
+
+% Font Awesome 5 icons
+\usepackage{fontawesome5}
+
+% For multi-column appendix
+\usepackage{multicol}
+
+% For preventing orphaned headings
+\usepackage{needspace}
+
+% ============================================
+% Font Configuration
+% ============================================
+
+% Gentium Plus for Greek text
+\IfFontExistsTF{Gentium Plus}{
+    \setmainfont{Gentium Plus}
+    \newfontfamily\greekfont{Gentium Plus}[Script=Greek]
+}{
+    \IfFontExistsTF{GentiumPlus}{
+        \setmainfont{GentiumPlus}
+        \newfontfamily\greekfont{GentiumPlus}[Script=Greek]
+    }{
+        \setmainfont{Latin Modern Roman}
+        \newfontfamily\greekfont{Latin Modern Roman}
+    }
+}
+
+% Custom font for ESV text with random stylistic alternates
+% The font has ss01-ss14 stylistic sets - we'll randomly apply them
+\newfontfamily\myfont[
+    Path={./},
+    Extension=.otf,
+    UprightFont={Myfont_full-Regular},
+    Ligatures=TeX,
+    RawFeature={+calt,+liga}
+]{Myfont}
+
+% ============================================
+% Lua code for random glyph variants
+% ============================================
+\begin{luacode*}
+-- Initialize random seed
+math.randomseed(os.time())
+
+-- Table of stylistic set features
+local stylistic_sets = {"ss01", "ss02", "ss03", "ss04", "ss05", "ss06", "ss07",
+                        "ss08", "ss09", "ss10", "ss11", "ss12", "ss13", "ss14"}
+
+-- Function to get a random stylistic set
+function get_random_ss()
+    return stylistic_sets[math.random(1, #stylistic_sets)]
+end
+
+-- Process text character by character and apply random variants
+function randomize_glyphs(text)
+    local result = {}
+    for char in string.utfvalues(text) do
+        local c = utf8.char(char)
+        -- Only randomize letters, not punctuation or spaces
+        if c:match("[%a]") then
+            local ss = get_random_ss()
+            table.insert(result, string.format("{\\addfontfeature{RawFeature=+%s}%s}", ss, c))
+        else
+            table.insert(result, c)
+        end
+    end
+    return table.concat(result)
+end
+\end{luacode*}
+
+% Command to apply random glyph variants
+\newcommand{\randomtext}[1]{%
+    \myfont\directlua{tex.print(randomize_glyphs("\luaescapestring{#1}"))}%
+}
+
+% ============================================
+% Column Configuration
+% ============================================
+% Left column (Greek interlinear): 52%
+% Right column (ESV): 48%
+\columnratio{0.52}
+
+\AtBeginDocument{%
+    \setcolumnwidth{0.52\textwidth, 0.48\textwidth}%
+}
+
+% ============================================
+% Custom Commands
+% ============================================
+
+% Interlinear gloss: Greek word with English above
+\newcommand{\gloss}[2]{%
+    \mbox{%
+        \begin{tabular}[b]{@{}c@{}}
+            {\scriptsize\color{gray}#2}\\[-4pt]
+            {\greekfont #1}
+        \end{tabular}%
+    }\hspace{0.15em}\allowbreak%
+}
+
+% Verse number in superscript (for Greek column)
+\newcommand{\versenum}[1]{%
+    \textsuperscript{\textbf{#1}}\hspace{0.15em}%
+}
+
+% ESV verse number with custom font
+\newcommand{\vs}[1]{%
+    {\myfont\textsuperscript{\textbf{#1}}}\hspace{0.1em}%
+}
+
+% ESV text wrapper with random glyphs
+\newcommand{\esvtext}[1]{\randomtext{#1}}
+
+% Section heading (ESV section titles)
+\newcommand{\sectionheading}[1]{%
+    \needspace{3\baselineskip}%
+    \vspace{0.6em}%
+    {\myfont\textsc{#1}}%
+    \vspace{0.3em}%
+    \par%
+}
+
+% Section title for the passage
+\newcommand{\passagetitle}[1]{%
+    \begin{center}
+        {\Large\bfseries #1}
+        \vspace{0.5em}
+    \end{center}
+}
+
+% Column headers
+\newcommand{\columnheaders}{%
+    \begin{paracol}{2}
+        \begin{center}
+            {\small\textsc{Greek Interlinear}}
+        \end{center}
+        \switchcolumn
+        \begin{center}
+            {\small\myfont\textsc{English Standard Version}}
+        \end{center}
+    \end{paracol}
+    \vspace{0.5em}
+    \hrule
+    \vspace{0.5em}
+}
+
+% ============================================
+% Document Settings
+% ============================================
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.4em}
+
+\setlength{\baselineskip}{11pt}
+
+\tolerance=1000
+\emergencystretch=3em
+\hfuzz=0.5pt
+
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+
+% ============================================
+% Header/Footer Configuration (Single-sided)
+% ============================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\fancyhead[L]{\small\textit{\leftmark}}
+\fancyhead[R]{\small\textit{\rightmark}}
+
+\fancyfoot[L]{\hyperlink{toc}{\Large\faIcon{home}}}
+\fancyfoot[C]{\thepage}
+
+% ============================================
+% Strong's Linked Gloss Commands
+% ============================================
+
+\newcommand{\glosslink}[3]{%
+    \mbox{%
+        \begin{tabular}[b]{@{}c@{}}
+            {\scriptsize\color{gray}\hyperlink{strongs:#3}{#2}}\\[-4pt]
+            {\greekfont #1}
+        \end{tabular}%
+    }\hspace{0.15em}\allowbreak%
+}
+
+% Appendix entry anchor with optional LSJ definition
+\newcommand{\strongsentry}[5]{%
+    \hypertarget{strongs:#1}{}%
+    \noindent\textbf{#1} --- {\greekfont #2} (#3)\par
+    \hangindent=1em\hangafter=0
+    \small\textit{Strong's:} #4%
+    \ifx&#5&%
+    \else
+        \par\small\textit{LSJ:} #5%
+    \fi
+    \par\vspace{0.5em}%
+}
+
+% Chapter marker for headers
+\newcommand{\chaptermark}[1]{\markboth{#1}{}}
+
+% Verse marker for headers
+\newcommand{\setverseheader}[1]{\markright{#1}}
